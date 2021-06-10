@@ -5,7 +5,7 @@
     </v-card-title>
 
     <v-card-text>
-      <v-form id="signup" v-model="formValidity" @submit.prevent="submitForm">
+      <v-form id="signup" v-model="formIsValid" @submit.prevent="submitForm">
         <v-text-field
           label="Username"
           prepend-icon="mdi-account-circle"
@@ -40,7 +40,7 @@
         type="submit"
         form="signup"
         color="success"
-        :disabled="!formValidity"
+        :disabled="!formIsValid"
         >Sign Up</v-btn
       >
     </v-card-actions>
@@ -53,38 +53,48 @@ export default {
     showPassword: false,
     username: '',
     usernameRules: [
-      (value) => !!value || 'Username is required.',
+      (value) => !!value || 'Username is required',
       (value) =>
-        value.length >= 5 || 'Username must have at least 5 characters.',
+        value.length >= 5 || 'Username must have at least 5 characters',
     ],
 
     email: '',
     emailRules: [
-      (value) => !!value || 'Email is required.',
+      (value) => !!value || 'Email is required',
       (value) =>
-        value.indexOf('@') !== 0 || "Email should include recipient's name.",
-      (value) => value.includes('@') || "Email should have an '@' symbol.",
+        value.indexOf('@') !== 0 || "Email should include recipient's name",
+      (value) => value.includes('@') || "Email should have an '@' symbol",
       // TODO: validate emails of usernames with dot - i.e. zigmantas.kulikauskas@gmail.com
       (value) =>
-        value.indexOf('.') - value.indexOf('@') > 1 ||
-        'Email should have a valid domain name.',
+        value.lastIndexOf('.') - value.indexOf('@') > 1 ||
+        'Email should have a valid domain name',
       (value) =>
-        value.indexOf('.') <= value.length - 3 ||
+        value.lastIndexOf('.') <= value.length - 3 ||
         'Email should contain a valid top-level domain',
+      (value) => (value.match(/@/g) || []).length === 1 || 'Invalid email',
     ],
 
     password: '',
     passwordRules: [
-      (value) => !!value || 'Password is required.',
+      (value) => !!value || 'Password is required',
       (value) =>
-        value.length >= 8 || 'Password must have at least 8 characters.',
+        value.length >= 8 || 'Password must have at least 8 characters',
     ],
 
-    formValidity: false,
+    formIsValid: false,
   }),
 
   methods: {
-    submitForm() {
+    async submitForm() {
+      // const actionPayload = {
+      //   username: this.username,
+      //   email: this.email,
+      //   password: this.password,
+      // };
+
+      // try {
+      //   await
+      // }
       this.$router.go('/');
       console.log('Form submitted');
     },
