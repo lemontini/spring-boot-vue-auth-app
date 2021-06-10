@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <!-- <img alt="Vue logo" src="../assets/logo.png"> -->
-    <h1>Welcome, user!</h1>
+    <h1>Welcome, {{ user }}!</h1>
   </div>
 </template>
 
@@ -10,6 +10,11 @@
 
 export default {
   name: 'Home',
-  components: {},
+  computed: {
+    user() {
+      console.log(this.$store.getters.userId);
+      return this.$store.getters.currentUser || 'unauthenticated user';
+    },
+  },
 };
 </script>
