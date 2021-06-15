@@ -1,55 +1,65 @@
 <template>
-  <v-card width="400" class="mx-auto mt-10 pa-5" elevation="5">
-    <v-card-title>
-      <h1 class="mx-auto my-5" v-if="mode == 'signin'">Sign In</h1>
-      <h1 class="mx-auto my-5" v-else>Create Account</h1>
-    </v-card-title>
+  <div>
+    <v-snackbar v-model="snackbar"
+      >{{ error }}
+      <template v-slot:action="{ attrs }">
+        <v-btn color="pink" text v-bind="attrs" @click="snackbar = false">
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
+    <v-card width="400" class="mx-auto mt-10 pa-5" elevation="5">
+      <v-card-title>
+        <h1 class="mx-auto my-5" v-if="mode == 'signin'">Sign In</h1>
+        <h1 class="mx-auto my-5" v-else>Create Account</h1>
+      </v-card-title>
 
-    <v-card-text>
-      <v-form id="signup" v-model="formIsValid" @submit.prevent="submitForm">
-        <v-text-field
-          v-if="mode !== 'signin'"
-          label="Username"
-          prepend-icon="mdi-account-circle"
-          v-model.trim="username"
-          :rules="usernameRules"
-          required
-        />
-        <v-text-field
-          label="Email"
-          prepend-icon="mdi-email"
-          v-model.trim="email"
-          :rules="emailRules"
-          required
-        />
-        <v-text-field
-          label="Password"
-          prepend-icon="mdi-lock"
-          :type="showPassword ? 'text' : 'password'"
-          :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-          @click:append="showPassword = !showPassword"
-          v-model="password"
-          :rules="passwordRules"
-          required
-        />
-      </v-form>
-    </v-card-text>
+      <v-card-text>
+        <v-form id="signup" v-model="formIsValid" @submit.prevent="submitForm">
+          <v-text-field
+            v-if="mode !== 'signin'"
+            label="Username"
+            prepend-icon="mdi-account-circle"
+            v-model.trim="username"
+            :rules="usernameRules"
+            required
+          />
+          <v-text-field
+            label="Email"
+            prepend-icon="mdi-email"
+            v-model.trim="email"
+            :rules="emailRules"
+            required
+          />
+          <v-text-field
+            label="Password"
+            prepend-icon="mdi-lock"
+            :type="showPassword ? 'text' : 'password'"
+            :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+            @click:append="showPassword = !showPassword"
+            v-model="password"
+            :rules="passwordRules"
+            required
+          />
+        </v-form>
+      </v-card-text>
 
-    <v-card-actions>
-      <!-- <v-btn plain color="info" to="/signin">Have an account?</v-btn> -->
-      <v-btn plain color="info" @click="toggleMode()">{{
-        mode == 'signup' ? 'Have an account?' : "Don't have an account?"
-      }}</v-btn>
-      <v-spacer />
-      <v-btn
-        type="submit"
-        form="signup"
-        color="success"
-        :disabled="!formIsValid"
-        >{{ mode == 'signin' ? 'Sign In' : 'Sign Up' }}</v-btn
-      >
-    </v-card-actions>
-  </v-card>
+      <v-card-actions>
+        <!-- <v-btn plain color="info" to="/signin">Have an account?</v-btn> -->
+        <v-btn plain color="info" @click="toggleMode()">{{
+          mode == 'signup' ? 'Have an account?' : "Don't have an account?"
+        }}</v-btn>
+        <v-spacer />
+        <v-btn
+          type="submit"
+          form="signup"
+          color="success"
+          :disabled="!formIsValid"
+          >{{ mode == 'signin' ? 'Sign In' : 'Sign Up' }}</v-btn
+        >
+      </v-card-actions>
+    </v-card>
+  </div>
 </template>
 
 <script>
@@ -89,6 +99,9 @@ export default {
     ],
 
     formIsValid: false,
+
+    error: null,
+    snackbar: false,
   }),
 
   methods: {
@@ -105,14 +118,17 @@ export default {
         password: this.password,
       };
 
-      // try {
-      //   await
-      // }
-      if (this.mode == 'signin') {
-        await this.$store.dispatch('signIn', actionPayload);
-      } else {
-        actionPayload.username = this.username;
-        await this.$store.dispatch('signUp', actionPayload);
+      try {
+        if (this.mode == 'signin') {
+          await this.$store.dispatch('signIn', actionPayload);
+        } else {
+          actionPayload.username = this.username;
+          await this.$store.dispatch('signUp', actionPayload);
+        }
+      } catch (err) {
+        this.error = err.response.data.message;
+        this.snackbar = true;
+        return;
       }
 
       this.$router.push('/');
