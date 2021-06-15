@@ -6,13 +6,13 @@
 npm install
 ```
 
-### Starts mock json-auth server
+### Start mock json-auth server
 
 ```
 npm run start
 ```
 
-### Compiles and hot-reloads for development
+### Compile and hot-reload client for development
 
 ```
 npm run serve
