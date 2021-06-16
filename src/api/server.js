@@ -1,3 +1,5 @@
+const userdbFile = 'src/api/users.json';
+
 const fs = require('fs');
 const bodyParser = require('body-parser');
 const jsonServer = require('json-server');
@@ -5,7 +7,7 @@ const jwt = require('jsonwebtoken');
 
 const server = jsonServer.create();
 const router = jsonServer.router('src/api/database.json');
-const userdb = JSON.parse(fs.readFileSync('src/api/users.json'));
+const userdb = JSON.parse(fs.readFileSync(userdbFile));
 
 server.use(bodyParser.urlencoded({ extended: true }));
 server.use(bodyParser.json());
@@ -30,7 +32,7 @@ function verifyToken(token) {
 // Check if the username or email exists in database
 function isUnique({ username, email }) {
   return (
-    userdb.users.findIndex(
+    JSON.parse(fs.readFileSync(userdbFile)).users.findIndex(
       (user) => user.email === email || user.username === username
     ) !== -1
   );
@@ -39,7 +41,7 @@ function isUnique({ username, email }) {
 // Check if the user exists in database
 function isAuthenticated({ email, password }) {
   return (
-    userdb.users.findIndex(
+    JSON.parse(fs.readFileSync(userdbFile)).users.findIndex(
       (user) => user.email === email && user.password === password
     ) !== -1
   );
@@ -47,11 +49,6 @@ function isAuthenticated({ email, password }) {
 
 // Get UserData from users database
 function getUserData({ email, password }) {
-  console.log(
-    userdb.users.find(
-      (user) => user.email === email && user.password === password
-    )
-  );
   return userdb.users.find(
     (user) => user.email === email && user.password === password
   );
@@ -59,8 +56,7 @@ function getUserData({ email, password }) {
 
 // Register New User
 server.post('/auth/register', (req, res) => {
-  console.log('register endpoint called; request body:');
-  console.log(req.body);
+  console.log('register user requested...');
   const { username, email, password } = req.body;
 
   if (isUnique({ username, email }) === true) {
@@ -70,7 +66,7 @@ server.post('/auth/register', (req, res) => {
     return;
   }
 
-  fs.readFile('src/api/users.json', (err, data) => {
+  fs.readFile('userdbFile', (err, data) => {
     if (err) {
       const status = 401;
       const message = err;
@@ -79,7 +75,7 @@ server.post('/auth/register', (req, res) => {
     }
 
     // Get current users data
-    var data = JSON.parse(data.toString());
+    data = JSON.parse(data.toString());
 
     // Get the id of last user
     var last_item_id = data.users[data.users.length - 1].id;
@@ -91,19 +87,15 @@ server.post('/auth/register', (req, res) => {
       email: email,
       password: password,
     }); //add some data
-    var writeData = fs.writeFile(
-      'src/api/users.json',
-      JSON.stringify(data),
-      (err) => {
-        // WRITE
-        if (err) {
-          const status = 401;
-          const message = err;
-          res.status(status).json({ status, message });
-          return;
-        }
+    fs.writeFile(userdbFile, JSON.stringify(data), (err) => {
+      // WRITE
+      if (err) {
+        const status = 401;
+        const message = err;
+        res.status(status).json({ status, message });
+        return;
       }
-    );
+    });
   });
 
   // Create token for new user
@@ -114,8 +106,7 @@ server.post('/auth/register', (req, res) => {
 
 // Login to one of the users from ./users.json
 server.post('/auth/login', (req, res) => {
-  console.log('login endpoint called; request body:');
-  console.log(req.body);
+  console.log('login user requested...');
   const { email, password } = req.body;
   if (isAuthenticated({ email, password }) === false) {
     const status = 401;
