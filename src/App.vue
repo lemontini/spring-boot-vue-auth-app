@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar app color="primary" dark>
+    <v-app-bar class="overlay" app color="primary" dark>
       <div class="d-flex align-center"></div>
       <v-spacer></v-spacer>
       <v-btn v-if="!userSignedIn" text rounded to="/signin">
@@ -8,6 +8,7 @@
         <v-icon>mdi-login</v-icon>
       </v-btn>
       <v-btn v-else rounded @click="logout">Log out</v-btn>
+      <i class="fab fa-facebook-f"></i>
     </v-app-bar>
 
     <v-main>
@@ -39,3 +40,13 @@ export default {
   },
 };
 </script>
+
+<style>
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,800');
+
+.overlay {
+  background: #ff416c;
+  background: -webkit-linear-gradient(to right, #ff4b2b, #ff416c);
+  background: linear-gradient(to right, #ff4b2b, #ff416c);
+}
+</style>
