@@ -1,4 +1,4 @@
-const userdbFile = 'src/api/user.json';
+const userdbFile = 'src/api/users.json';
 
 const fs = require('fs');
 const bodyParser = require('body-parser');
