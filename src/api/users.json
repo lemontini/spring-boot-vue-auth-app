@@ -4,19 +4,13 @@
       "id": 1,
       "username": "bruno",
       "email": "bruno@email.com",
-      "password": "bruno"
+      "password": "brunonas"
     },
     {
       "id": 2,
-      "username": "montini",
-      "email": "lemontini@gmail.com",
-      "password": "energotronic1"
-    },
-    {
-      "id": 3,
-      "username": "liusia",
-      "email": "deja@nebera.com",
-      "password": "liudnasliutas"
+      "username": "tomas",
+      "email": "tomas@email.com",
+      "password": "tomastomas"
     }
   ]
 }

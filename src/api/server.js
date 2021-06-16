@@ -30,7 +30,7 @@ function verifyToken(token) {
 // Check if the username or email exists in database
 function isUnique({ username, email }) {
   return (
-    userdb.users.findIndex(
+    JSON.parse(fs.readFileSync('src/api/users.json')).users.findIndex(
       (user) => user.email === email || user.username === username
     ) !== -1
   );
@@ -39,8 +39,11 @@ function isUnique({ username, email }) {
 // Check if the user exists in database
 function isAuthenticated({ email, password }) {
   return (
-    userdb.users.findIndex(
-      (user) => user.email === email && user.password === password
+    JSON.parse(fs.readFileSync('src/api/users.json')).users.findIndex(
+      (user) => {
+        console.dir(user);
+        return user.email === email && user.password === password;
+      }
     ) !== -1
   );
 }
