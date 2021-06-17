@@ -3,6 +3,10 @@
     <v-app-bar class="overlay" app color="primary" dark>
       <div class="d-flex align-center"></div>
       <v-spacer></v-spacer>
+      <v-btn text rounded to="/login">
+        <span class="mr-2">Log In</span>
+        <v-icon>mdi-login</v-icon>
+      </v-btn>
       <v-btn v-if="!userSignedIn" text rounded to="/signin">
         <span class="mr-2">Sign In</span>
         <v-icon>mdi-login</v-icon>
