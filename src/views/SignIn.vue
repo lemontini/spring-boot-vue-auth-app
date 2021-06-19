@@ -164,6 +164,7 @@ export default {
           await this.$store.dispatch('signUp', actionPayload);
         }
       } catch (err) {
+        console.log(err);
         this.error = err.response.data.message;
         this.snackbar = true;
         return;
