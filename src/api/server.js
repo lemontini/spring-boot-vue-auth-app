@@ -34,7 +34,7 @@ function isUnique({ username, email }) {
   return (
     JSON.parse(fs.readFileSync(userdbFile)).users.findIndex(
       (user) => user.email === email || user.username === username
-    ) !== -1
+    ) === -1
   );
 }
 
@@ -49,7 +49,7 @@ function isAuthenticated({ email, password }) {
 
 // Get UserData from users database
 function getUserData({ email, password }) {
-  return userdb.users.find(
+  return JSON.parse(fs.readFileSync(userdbFile)).users.find(
     (user) => user.email === email && user.password === password
   );
 }
@@ -59,14 +59,14 @@ server.post('/auth/register', (req, res) => {
   console.log('register user requested...');
   const { username, email, password } = req.body;
 
-  if (isUnique({ username, email }) === true) {
+  if (!isUnique({ username, email })) {
     const status = 401;
     const message = 'These credentials are already used';
     res.status(status).json({ status, message });
     return;
   }
 
-  fs.readFile('userdbFile', (err, data) => {
+  fs.readFile(userdbFile, (err, data) => {
     if (err) {
       const status = 401;
       const message = err;
